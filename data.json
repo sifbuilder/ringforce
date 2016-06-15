@@ -1,0 +1,13 @@
+{
+  "nodes":[
+    {"name":"Myriel","group":1},
+    {"name":"Napoleon","group":1},
+    {"name":"Mlle.Baptistine","group":1},
+    {"name":"Mme.Magloire","group":1}
+  ],
+  "links":[
+    {"source":1,"target":2, "index":1},
+    {"source":2,"target":1, "index":2},
+    {"source":2,"target":3, "index":3}
+ ]
+}
