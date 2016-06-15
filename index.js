@@ -1,6 +1,9 @@
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var width = 640;
+var height = 480;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.index; }))
@@ -20,7 +23,7 @@ d3.json("data.json", function(error, graph) {
   var node = svg.append("g")
       .attr("class", "nodes")
     .selectAll("circle")
-    .data(graph.nodes)
+    .data(graph.nodes, function(d) { return d.id })
     .enter().append("circle")
       .attr("r", 6.5)
       .call(d3.drag()
