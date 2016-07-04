@@ -142,7 +142,6 @@ var svgElement = 	d3.select("svg")
 var hpct = parseInt(svgElement.style("width"), 10) / 100
 var vpct = parseInt(svgElement.style("height"), 10) / 100
 var mpct = hpct +  vpct / 2
-console.log("pct: " , hpct, vpct, mpct)
 		
   var linkLines = svg.append("g")
       .attr("class", "links")
