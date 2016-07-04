@@ -1,7 +1,6 @@
-// d3.json("data.json", function(error, graph) {
-  // if (error) throw error;
-
-
+/* ------------------	*/
+/* index.js   		    */
+/* ------------------	*/
 
 var nodes = [];
 var links = [];
@@ -138,26 +137,17 @@ var svg = d3.select("body").append("svg")
 		.attr("id", "svg")
     .attr("width", width)
     .attr("height", height)
-   // .attr("width", width)
-    // .attr("height", height)
 
 var svgElement = 	d3.select("svg")		
-// var hpct = svgElement.property("scrollWidth") / 100
-// var vpct = svgElement.property("scrollHeigth") / 100
-// var mpct = hpct +  vpct / 2
-// console.log("pct: " , hpct, vpct, mpct)
-
 var hpct = parseInt(svgElement.style("width"), 10) / 100
 var vpct = parseInt(svgElement.style("height"), 10) / 100
 var mpct = hpct +  vpct / 2
 console.log("pct: " , hpct, vpct, mpct)
 		
-		
   var linkLines = svg.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(links)
-    // .data(graph.links)
     .enter().append("line");
 
 	// ----------------
@@ -167,7 +157,6 @@ console.log("pct: " , hpct, vpct, mpct)
     .data(nodes, function(d) { return d.id })
 		
   var nodeCircles = nodeGroups
-    // .data(graph.nodes, function(d) { return d.id })
     .enter().append("circle")
 			.attr("cx", function(d) { return d.xpct * hpct})
 			.attr("cy", function(d) { return d.ypct * vpct})
@@ -229,11 +218,8 @@ function tickforce(alpha) {
 		hpct = parseInt(svgElement.style("width"), 10) / 100
 		vpct = parseInt(svgElement.style("height"), 10) / 100
 		mpct = hpct +  vpct / 2
-		// console.log("pct: " , hpct, vpct, mpct)
 
- // for (var i = 0, n = nodes.length, node, k = alpha * 0.1; i < n; ++i) {
- 				var t_angle = (2 * Math.PI) * alpha;
-	 for (var i = 0, n = nodes.length, node; i < n; ++i) {
+		for (var i = 0, n = nodes.length, node; i < n; ++i) {
 	 
 			node = nodes[i];
 			var dir = 0
@@ -323,29 +309,29 @@ function init() {
 			// .attr("x", function(d) { return d.xpct * hpct})
 			// .attr("y", function(d) { return d.ypct * vpct});
 	
-	nodeTexts // .transition(100).duration(animationStep)
+	nodeTexts
 			.attr("x", function(d) { return d.xpct * hpct })
 			.attr("y", function(d) { return d.ypct * vpct})
 }
 
 function ticked() {
-	linkLines // .transition(100).duration(animationStep)
+	linkLines
 			.attr("x1", function(d) { return d.source.x; })
 			.attr("y1", function(d) { return d.source.y; })
 			.attr("x2", function(d) { return d.target.x; })
 			.attr("y2", function(d) { return d.target.y; })
 
-	nodeCircles // .transition(100).duration(animationStep)
+	nodeCircles
 			.attr("cx", function(d) { return d.x })
 			.attr("cy", function(d) { return d.y })
 			.attr("r", function(d) { return d.r })
 
-	// nodeRects // .transition(100).duration(animationStep)
+	// nodeRects
 			// .attr("x", function(d) { return d.x - d.cr })
 			// .attr("y", function(d) { return d.y; });
 
 
-	nodeTexts // .transition(100).duration(animationStep)
+	nodeTexts
 			.attr("x", function(d) { return d.x })
 			.attr("y", function(d) { return d.y })			
 			.text(function(d) { return "" + Math.round(d.x) + ":" +  Math.round(d.y)})
@@ -361,48 +347,6 @@ simulation
 	})
 
 init();
-// setInterval(
-		// function() { console.log("step"); simulation.tick(); },
-		// animationStep
-// );
-
-
-
-// d3.timer(tick_force)		// =================
-
-function tick_force(_elapsed) {
-console.log("elapsed: ", _elapsed)
-	timer_elapsed = _elapsed;
-	var alpha = _elapsed
-
-	// Process all circles data. 
-	for (var i = 0, k = alpha * 0.000001; i<nodes.length;i++)	{
-	
-		var t_node = nodes[i];
-		if (t_node.starttime == undefined) t_node.starttime = _elapsed
-			var t_elapsed = _elapsed - t_node.starttime	// Calc elapsed time.
-			t_node.elapsed = t_elapsed	// Keep a record.
-			var t = t_elapsed / t_node.timelimit	// Calculate how far through the desired time for one iteration.
-			if (t_node.color == 'blue')	{
-				var rotation_radius = t_node.rotr
-				var t_offset = t_node.offset
-				var t_angle = (2 * Math.PI) * t;
-				var t_x = rotation_radius * Math.cos(t_angle);
-				// var t_y = rotation_radius * Math.sin(t_angle);
-
-				// t_node.x = (width/2) + t_offset + t_x
-					t_node.xpct += 5 * Math.cos(t_angle)
-					// t_node.xpct += t_x
-				
-				// t_node.vxpct -= t_node.xpct * Math.cos(t_angle) * k;
-				// t_node.vypct -= t_node.ypct * Math.sin(t_angle) * k;
-				
-			}
-		}
-	// console.log("^^^^ 2", JSON.stringify(nodes, null, 2))
-		
-		// simulation.restart()		
-}
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart()
