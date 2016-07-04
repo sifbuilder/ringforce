@@ -10,7 +10,6 @@ var links = [];
 var nodes = [{
 	id: 1,
 	group: 1,
-	cr: 3,
 	rotr: 100,
 	rtype: "circle",
 	color: "red",
@@ -18,17 +17,19 @@ var nodes = [{
 	timelimit: 2000,
 	starttime: undefined,
 	elapsed: 0,
-	x: 100,
-	y: 100,
-	vx: 0,
-	vy: 0,
 	scale: 1,
 	move: false,
+	tpct: 1,
+	rpct: 2,
+	xpct: 15,
+	ypct: 50,
+	vxpct: 0,
+	vypct: 0,
 }
 , {
 	id: 2,
 	group: 1,
-	cr: 3,
+	rpct: 2,
 	rotr: 100,
 	rtype: "circle",
 	color: "blue",
@@ -36,17 +37,18 @@ var nodes = [{
 	timelimit: 2000,
 	starttime: undefined,
 	elapsed: 0,
-	x: 500,
-	y: 100,
-	vx: 0,
-	vy: 0,
+	tpct: 1,
+	xpct: 80,
+	ypct: 50,
+	vxpct: 0,
+	vypct: 0,
 	scale: 1,
 	move: false,
 }
 , {
 	id: 3,
 	group: 1,
-	cr: 3,
+	rpct: 2,
 	rotr: 100,
 	rtype: "circle",
 	color: "green",
@@ -54,17 +56,18 @@ var nodes = [{
 	timelimit: 2000,
 	starttime: undefined,
 	elapsed: 0,
-	x: 350,
-	y: 100,
-	vx: 0,
-	vy: 0,
+	tpct: 1,
+	xpct: 60,
+	ypct: 50,
+	vxpct: 0,
+	vypct: 0,
 	scale: 1,
 	move: false,
 }
 , {
 	id: 4,
 	group: 1,
-	cr: 3,
+	rpct: 2,
 	rotr: 100,
 	rtype: "circle",
 	color: "black",
@@ -72,17 +75,18 @@ var nodes = [{
 	timelimit: 2000,
 	starttime: undefined,
 	elapsed: 0,
-	x: 550,
-	y: 100,
-	vx: 0,
-	vy: 0,
+	tpct: 1,
+	xpct: 90,
+	ypct: 50,
+	vxpct: 0,
+	vypct: 0,
 	scale: 1,
 	move: false,
 }
 , {
 	id: 5,
 	group: 1,
-	cr: 3,
+	rpct: 2,
 	rotr: 100,
 	rtype: "circle",
 	color: "grey",
@@ -90,10 +94,11 @@ var nodes = [{
 	timelimit: 2000,
 	starttime: undefined,
 	elapsed: 0,
-	x: 50,
-	y: 100,
-	vx: 0,
-	vy: 0,
+	tpct: 1,
+	xpct: 10,
+	ypct: 50,
+	vxpct: 0,
+	vypct: 0,
 	scale: 1,
 	move: false,
 }
@@ -122,23 +127,31 @@ var links = [{
 }
 ]
 
-var width = '100%' // 640;
-var height = '100%' // 480;
+var width = '100%' //'100%' // 640 // 
+var height = '100%' // '100%' // 480 //
 var animationStep = 500;
 var centerx = width / 2
 var centery = height / 2
  
 
 var svg = d3.select("body").append("svg")
+		.attr("id", "svg")
     .attr("width", width)
     .attr("height", height)
    // .attr("width", width)
     // .attr("height", height)
 
-var wpct = svg.property("scrollWidth") / 100
-var hpct = svg.property("scrollHeigth") / 100
-var mpct = wpct +  hpct / 2
+var svgElement = 	d3.select("svg")		
+// var hpct = svgElement.property("scrollWidth") / 100
+// var vpct = svgElement.property("scrollHeigth") / 100
+// var mpct = hpct +  vpct / 2
+// console.log("pct: " , hpct, vpct, mpct)
 
+var hpct = parseInt(svgElement.style("width"), 10) / 100
+var vpct = parseInt(svgElement.style("height"), 10) / 100
+var mpct = hpct +  vpct / 2
+console.log("pct: " , hpct, vpct, mpct)
+		
 		
   var linkLines = svg.append("g")
       .attr("class", "links")
@@ -147,37 +160,47 @@ var mpct = wpct +  hpct / 2
     // .data(graph.links)
     .enter().append("line");
 
-  var nodeCircles = svg.append("g")
+	// ----------------
+	var nodeGroups = svg.append("g")
     .attr("class", "nodes")
     .selectAll("circle")
     .data(nodes, function(d) { return d.id })
+		
+  var nodeCircles = nodeGroups
     // .data(graph.nodes, function(d) { return d.id })
     .enter().append("circle")
-    .attr("r", function(d) { return d.cr })
-    .attr("cx", function(d) { return d.x })
-    .attr("cy", function(d) { return d.y })
-    .style("fill", function(d) { return d.color })
-      .call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
+			.attr("cx", function(d) { return d.xpct * hpct})
+			.attr("cy", function(d) { return d.ypct * vpct})
+			.attr("r", function(d) { return d.rpct * mpct})
+			.style("fill", function(d) { return d.color })
+				.call(d3.drag()
+						.on("start", dragstarted)
+						.on("drag", dragged)
+						.on("end", dragended))
 
-  nodeCircles.append("title")
-      .text(function(d) { return d.id; });
-	
-	var nodeRects = svg.append("g")
-						.attr("class", "nodes")
-						.selectAll("rect")
-						.data(nodes, function(d) { return d.id })
-            .enter()
-            .append("rect")
-            .attr("x", function (d) { return d.x - d.cr })
-            .attr("y", function (d) { return d.y; })
-            .attr("height", function (d) { return 2 * d.cr * mpct })
-            .attr("width", function (d) { return 2 * d.cr * mpct })
- 						.attr("stroke-width", 1)
-						.attr("stroke", "grey")
-						.style("fill", function(d) { return d.color })
+  var nodeTexts = nodeGroups
+			.enter().append("text")
+				.attr("x", function(d) { return d.xpct * hpct})
+				.attr("y", function(d) { return d.ypct * vpct})
+				.style("text-anchor", "middle")
+				.style("font-family", "sans-serif")
+				.style("font-size", function(d) { return d.tpct + "vw" })
+				.style("fill", "white")
+				.text(function(d) { return "" + Math.round(d.xpct * hpct) + ":" +  Math.round(d.ypct * vpct)})
+
+	// var nodeRects = svg.append("g")
+						// .attr("class", "nodes")
+						// .selectAll("rect")
+						// .data(nodes, function(d) { return d.id })
+            // .enter()
+            // .append("rect")
+            // .attr("x", function (d) { return d.xpct * mpct})
+            // .attr("y", function (d) { return d.ypct * mpct})
+            // .attr("height", function (d) { return 2 * d.rpct * mpct })
+            // .attr("width", function (d) { return 2 * d.rpct * mpct })
+ 						// .attr("stroke-width", 1)
+						// .attr("stroke", "grey")
+						// .style("fill", function(d) { return d.color })
 						
 	var simulation = d3.forceSimulation()
 				.alpha(1)		// tick increments the current alpha by (alphaTarget - alpha) × alphaDecay
@@ -195,7 +218,7 @@ var mpct = wpct +  hpct / 2
 	simulation
     .force("link", d3.forceLink().id(function(d) { return d.index; }))
     .force("charge", d3.forceManyBody().strength(-20))						// positive: attraction
-		.force("collide", d3.forceCollide(function(d) {return d.cr + 10}).iterations(4)) //
+		.force("collide", d3.forceCollide(function(d) {return (d.rpct) * mpct}).iterations(4)) //
     // .force("center", d3.forceCenter(width / 2, height / 2))				// 
 
   simulation
@@ -203,56 +226,106 @@ var mpct = wpct +  hpct / 2
       .links(links).strength(0) // .iterations(10).distance(100)
 
 function tickforce(alpha) {
- 		wpct = svg.property("scrollWidth") / 100
- 		hpct = svg.property("scrollHeigth") / 100
-		console.log("wpct: " , wpct)
+		hpct = parseInt(svgElement.style("width"), 10) / 100
+		vpct = parseInt(svgElement.style("height"), 10) / 100
+		mpct = hpct +  vpct / 2
+		// console.log("pct: " , hpct, vpct, mpct)
 
  // for (var i = 0, n = nodes.length, node, k = alpha * 0.1; i < n; ++i) {
  				var t_angle = (2 * Math.PI) * alpha;
-	 for (var i = 0, n = nodes.length, node, dir = 0 , k = 1; i < n; ++i) {
+	 for (var i = 0, n = nodes.length, node; i < n; ++i) {
+	 
 			node = nodes[i];
-			if (node.color == 'red')	{
-				var dir = Math.sign(300 - node.x)// +1 | -1
-				var q = (node.x - 300) / 300 // -1 | 0 | +1
-				node.vx = node.vx - q * 0.1 // * Math.cos(t_angle)
-				node.fy = 100
+			var dir = 0
+			var k = 1
+			var p = 0.01
+			var c = 50
+			var qpct = 1
+			if (node.color == 'red')	{				// red
+			
+				qpct = (node.xpct - c ) / c // -1 | 0 | +1
+				node.x = node.xpct * hpct
+				node.xpct = node.x / hpct
+				node.vxpct = node.vx / hpct
+			
+				node.vxpct = node.vxpct - qpct * p  
+				node.xpct = node.xpct + node.vxpct
+				
+				node.vx = node.vxpct * hpct
+				node.x = node.xpct * hpct
+				
+				node.fy = node.ypct * vpct
+
+				node.r = node.rpct * mpct
+				}
+			if (node.color == 'blue')	{ 			// blue
+		
+				qpct = (node.xpct - c ) / c // -1 | 0 | +1
+				node.x = node.xpct * hpct
+				node.xpct = node.x / hpct
+				node.vxpct = node.vx / hpct
+			
+				node.vxpct = node.vxpct - qpct * p  
+				node.xpct = node.xpct + node.vxpct
+				
+				node.vx = node.vxpct * hpct
+				node.x = node.xpct * hpct
+				
+				node.fy = node.ypct * vpct
+
+				node.r = node.rpct * mpct
 			}
-			if (node.color == 'blue')	{
-				var dir = Math.sign(300 - node.x)// +1 | -1
-				var q = (node.x - 300) / 300 // -1 | 0 | +1
-				node.vx = node.vx - q * 0.1 // * Math.cos(t_angle)
-				node.fy = 100
+			if (node.color == 'green')	{	 	// green
+		
+				qpct = (node.xpct - c ) / c // -1 | 0 | +1
+				node.x = node.xpct * hpct
+				node.xpct = node.x / hpct
+				node.vxpct = node.vx / hpct
+			
+				node.vxpct = node.vxpct - qpct * p  
+				node.xpct = node.xpct + node.vxpct
+				
+				node.vx = node.vxpct * hpct
+				node.x = node.xpct * hpct
+				
+				node.fy = node.ypct * vpct
+
+				node.r = node.rpct * mpct
 			}
-			if (node.color == 'green')	{
-				// node.fx = 350
-				node.fy = 100
+			if (node.color == 'black')	{		// black
+				node.fx = node.xpct * hpct
+				node.fy = node.ypct * vpct
+
+				node.r = node.rpct * mpct
 			}
-			if (node.color == 'black')	{
-				node.fx = 550
-				node.fy = 100
-			}
-			if (node.color == 'grey')	{
-				node.fx = 50
-				node.fy = 100
+			if (node.color == 'grey')	{		// grey
+				node.fx = node.xpct * hpct
+				node.fy = node.ypct * vpct
+
+				node.r = node.rpct * mpct
 			}
 		}
 }
 
 function init() {
-			// console.log("init ")
 	linkLines
-			.attr("x1", function(d) { return d.source.x; })
-			.attr("y1", function(d) { return d.source.y; })
-			.attr("x2", function(d) { return d.target.x; })
-			.attr("y2", function(d) { return d.target.y; });
+			.attr("x1", function(d) { return d.source.xpct * hpct })
+			.attr("y1", function(d) { return d.source.ypct * vpct })
+			.attr("x2", function(d) { return d.target.xpct * hpct })
+			.attr("y2", function(d) { return d.target.ypct * vpct })
 
 	nodeCircles
-			.attr("cx", function(d) { return d.x; })
-			.attr("cy", function(d) { return d.y; });
+			.attr("cx", function(d) { return d.xpct * hpct })
+			.attr("cy", function(d) { return d.ypct * vpct })
+			.attr("r", function(d) { return d.rpct * mpct })
 
-	nodeRects
-			.attr("x", function(d) { return d.x - d.cr })
-			.attr("y", function(d) { return d.y; });
+	// nodeRects
+			// .attr("x", function(d) { return d.xpct * hpct})
+			// .attr("y", function(d) { return d.ypct * vpct});
+	
+	nodeTexts // .transition(100).duration(animationStep)
+			.attr("x", function(d) { return d.xpct * hpct })
+			.attr("y", function(d) { return d.ypct * vpct})
 }
 
 function ticked() {
@@ -260,15 +333,22 @@ function ticked() {
 			.attr("x1", function(d) { return d.source.x; })
 			.attr("y1", function(d) { return d.source.y; })
 			.attr("x2", function(d) { return d.target.x; })
-			.attr("y2", function(d) { return d.target.y; });
+			.attr("y2", function(d) { return d.target.y; })
 
 	nodeCircles // .transition(100).duration(animationStep)
-			.attr("cx", function(d) { return d.x; })
-			.attr("cy", function(d) { return d.y; });
+			.attr("cx", function(d) { return d.x })
+			.attr("cy", function(d) { return d.y })
+			.attr("r", function(d) { return d.r })
 
-	nodeRects // .transition(100).duration(animationStep)
-			.attr("x", function(d) { return d.x - d.cr })
-			.attr("y", function(d) { return d.y; });
+	// nodeRects // .transition(100).duration(animationStep)
+			// .attr("x", function(d) { return d.x - d.cr })
+			// .attr("y", function(d) { return d.y; });
+
+
+	nodeTexts // .transition(100).duration(animationStep)
+			.attr("x", function(d) { return d.x })
+			.attr("y", function(d) { return d.y })			
+			.text(function(d) { return "" + Math.round(d.x) + ":" +  Math.round(d.y)})
 }
 
 simulation
@@ -277,11 +357,10 @@ simulation
 		tickforce(this.alpha())
 	})
  .on("end", function() {
-console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ")
 		// simulation.restart()
 	})
 
-// init();
+init();
 // setInterval(
 		// function() { console.log("step"); simulation.tick(); },
 		// animationStep
@@ -312,11 +391,11 @@ console.log("elapsed: ", _elapsed)
 				// var t_y = rotation_radius * Math.sin(t_angle);
 
 				// t_node.x = (width/2) + t_offset + t_x
-					t_node.x += 5 * Math.cos(t_angle)
-					// t_node.x += t_x
+					t_node.xpct += 5 * Math.cos(t_angle)
+					// t_node.xpct += t_x
 				
-				// t_node.vx -= t_node.x * Math.cos(t_angle) * k;
-				// t_node.vy -= t_node.y * Math.sin(t_angle) * k;
+				// t_node.vxpct -= t_node.xpct * Math.cos(t_angle) * k;
+				// t_node.vypct -= t_node.ypct * Math.sin(t_angle) * k;
 				
 			}
 		}
